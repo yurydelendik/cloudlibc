@@ -18,6 +18,7 @@
 #include <stdint.h>
 #include <threads.h>
 
+#ifndef NOVDSO
 // Process-wide system call table. By default, it is filled with a
 // single function that just returns ENOSYS. The actual implementations
 // need to be provided by the vDSO.
@@ -47,6 +48,7 @@ CLOUDABI_SYSCALL_NAMES(wrapper)
 #ifndef __wasm__
 // DSO handle. Not used, as we only support static linkage.
 void *__dso_handle = NULL;
+#endif
 #endif
 
 // Stack protection: stack smashing and LLVM SafeStack.
@@ -131,6 +133,7 @@ static int fd_passthrough(void *arg, size_t fd) {
   return fd > INT_MAX ? -1 : fd;
 }
 
+#ifndef NOVDSO
 // Links program to the vDSO.
 //
 // The vDSO provides a function for every system call. This function
@@ -199,6 +202,7 @@ static void link_vdso(const ElfW(Ehdr) * ehdr) {
     ++sym;
   }
 }
+#endif
 
 // Relocations for Position Independent Executables.
 //
@@ -364,6 +368,7 @@ noreturn void _start(const cloudabi_auxv_t *auxv) {
   }
 #endif
 
+#ifndef NOVDSO
   // Initialize the system call table with functions that return ENOSYS.
   typedef cloudabi_errno_t (*syscall_t)(void);
   for (size_t i = 0; i < sizeof(syscall_table) / sizeof(syscall_t); ++i) {
@@ -374,6 +379,7 @@ noreturn void _start(const cloudabi_auxv_t *auxv) {
   // implementations provided by the vDSO.
   if (at_sysinfo_ehdr != NULL)
     link_vdso(at_sysinfo_ehdr);
+#endif
 
 #if PIE_RELOCATOR
   // Terminate immediately if there was a relocation that we didn't
