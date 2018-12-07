@@ -5,8 +5,12 @@
 #include <setjmp.h>
 #include <testing.h>
 
+#ifndef __wasm__
+
 TEST(setjmp_longjmp, example) {
   jmp_buf jmp;
   while (setjmp(jmp) != 123)
     longjmp(jmp, 123);
 }
+
+#endif

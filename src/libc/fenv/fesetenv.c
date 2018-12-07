@@ -21,6 +21,9 @@ int fesetenv(const fenv_t *envp) {
   fldenv(&envp->__x87);
   ldmxcsr(envp->__mxcsr);
   return 0;
+#elif defined(__wasm__)
+  // TODO
+  return 0;
 #else
 #error "Unsupported platform"
 #endif

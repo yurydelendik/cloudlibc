@@ -28,6 +28,9 @@ int feraiseexcept(int excepts) {
   // Wait for floating-point unit changes to be applied.
   fwait();
   return 0;
+#elif defined(__wasm__)
+  // TODO
+  return 0;
 #else
 #error "Unsupported platform"
 #endif

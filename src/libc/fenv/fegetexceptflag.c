@@ -19,6 +19,9 @@ int fegetexceptflag(fexcept_t *flagp, int excepts) {
   // Combine the x87 and SSE exception flags.
   flagp->__exceptions = (fnstsw() | stmxcsr()) & excepts;
   return 0;
+#elif defined(__wasm__)
+  // TODO
+  flagp->__exceptions = 0;
 #else
 #error "Unsupported platform"
 #endif

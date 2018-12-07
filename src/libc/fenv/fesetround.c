@@ -36,6 +36,9 @@ int fesetround(int round) {
   ldmxcsr((stmxcsr() & ~ROUNDING_MASK) | round);
 
   return 0;
+#elif defined(__wasm__)
+  // TODO
+  return 0;
 #else
 #error "Unsupported platform"
 #endif

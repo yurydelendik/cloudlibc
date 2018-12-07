@@ -24,6 +24,8 @@ install -m 444 _obj/libargdata.a _obj/libc.a _obj/libm.a _obj/libpthread.a \
     _obj/crt0.o _obj/crtbegin.o _obj/crtend.o \
     "${DESTDIR}${PREFIX}/lib/"
 
-echo "=> Installing unit tests"
-mkdir -p "${DESTDIR}${PREFIX}/bin"
-install -m 555 _obj/cloudlibc-unittests "${DESTDIR}${PREFIX}/bin/"
+if [ "$1" != "notests" ]; then
+    echo "=> Installing unit tests"
+    mkdir -p "${DESTDIR}${PREFIX}/bin"
+    install -m 555 _obj/cloudlibc-unittests "${DESTDIR}${PREFIX}/bin/"
+fi

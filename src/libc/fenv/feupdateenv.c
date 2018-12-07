@@ -26,6 +26,9 @@ int feupdateenv(const fenv_t *envp) {
 
   // Raise saved exceptions.
   return feraiseexcept(exceptions);
+#elif defined(__wasm__)
+  // TODO
+  return 0;
 #else
 #error "Unsupported platform"
 #endif

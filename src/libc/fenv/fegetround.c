@@ -16,6 +16,9 @@ int fegetround(void) {
 #elif defined(__i386__) || defined(__x86_64__)
   // Obtain rounding mode from SSE.
   return stmxcsr() & ROUNDING_MASK;
+#elif defined(__wasm__)
+  // TODO
+  return 0;
 #else
 #error "Unsupported platform"
 #endif

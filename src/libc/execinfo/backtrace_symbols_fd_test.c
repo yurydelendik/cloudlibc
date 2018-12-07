@@ -7,6 +7,8 @@
 #include <testing.h>
 #include <unistd.h>
 
+#ifndef __wasm__
+
 TEST(backtrace_symbols_fd, example) {
   int fds[2];
   ASSERT_EQ(0, pipe(fds));
@@ -28,3 +30,5 @@ TEST(backtrace_symbols_fd, example) {
   ASSERT_EQ(0, close(fds[0]));
   ASSERT_ARREQ(expected, actual, len);
 }
+
+#endif

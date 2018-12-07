@@ -27,6 +27,9 @@ int feclearexcept(int excepts) {
   ldmxcsr(mxcsr & ~excepts);
 
   return 0;
+#elif defined(__wasm__)
+  // TODO
+  return 0;
 #else
 #error "Unsupported platform"
 #endif

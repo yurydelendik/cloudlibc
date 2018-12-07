@@ -76,6 +76,22 @@ static inline void tcb_set(cloudabi_tcb_t *tcb) {
   asm volatile("mov %0, %%fs:0" : : "r"(tcb));
 }
 
+#elif defined(__wasm__)
+
+#define TLS_VARIANT 2
+
+// Fetches the TCB from the CPU's registers.
+static inline cloudabi_tcb_t *tcb_get(void) {
+  // cloudabi_tcb_t *tcb;
+  // TODO asm volatile("mov %%fs:0, %0" : "=r"(tcb));
+  return NULL;
+}
+
+// Changes the TCB in the CPU's registers.
+static inline void tcb_set(cloudabi_tcb_t *tcb) {
+  // TODO asm volatile("mov %0, %%fs:0" : : "r"(tcb));
+}
+
 #else
 #error "Unsupported architecture"
 #endif

@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <testing.h>
 
+#ifndef __wasm__
+
 TEST(backtrace_symbols, zero) {
   // This should return an empty list.
   char **result = backtrace_symbols(NULL, 0);
@@ -26,3 +28,5 @@ TEST(backtrace_symbols, example) {
   ASSERT_STREQ(buf, result[2]);
   free(result);
 }
+
+#endif

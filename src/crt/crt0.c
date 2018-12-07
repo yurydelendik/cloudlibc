@@ -203,7 +203,7 @@ static void link_vdso(const ElfW(Ehdr) * ehdr) {
 // to apply relocations to data segments during early startup.
 #if defined(__aarch64__) || defined(__riscv) || defined(__x86_64__)
 #define PIE_RELOCATOR 1
-#elif defined(__arm__) || defined(__i386__)
+#elif defined(__arm__) || defined(__i386__) || defined(__wasm__)
 #define PIE_RELOCATOR 0
 #else
 #error "Unsupported architecture"

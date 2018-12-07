@@ -4,7 +4,7 @@
 
 #include <setjmp.h>
 
-#ifndef __aarch64__
+#if !defined(__aarch64__) && !defined(__wasm__)
 
 void longjmp(jmp_buf env, int val) {
   env->__val = val == 0 ? 1 : val;

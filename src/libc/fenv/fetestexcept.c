@@ -16,6 +16,9 @@ int fetestexcept(int excepts) {
 #elif defined(__i386__) || defined(__x86_64__)
   // Combine the x87 and SSE exception flags.
   return (fnstsw() | stmxcsr()) & excepts;
+#elif defined(__wasm__)
+  // TODO
+  return 0;
 #else
 #error "Unsupported platform"
 #endif

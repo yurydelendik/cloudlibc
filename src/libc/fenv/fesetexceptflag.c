@@ -27,6 +27,9 @@ int fesetexceptflag(const fexcept_t *flagp, int excepts) {
   ldmxcsr((stmxcsr() & ~excepts) | (flagp->__exceptions & excepts));
 
   return 0;
+#elif defined(__wasm__)
+  // TODO
+  return 0;
 #else
 #error "Unsupported platform"
 #endif

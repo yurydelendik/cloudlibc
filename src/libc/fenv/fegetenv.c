@@ -26,6 +26,9 @@ int fegetenv(fenv_t *envp) {
   envp->__mxcsr = stmxcsr();
 
   return 0;
+#elif defined(__wasm__)
+  // TODO
+  return 0;
 #else
 #error "Unsupported platform"
 #endif

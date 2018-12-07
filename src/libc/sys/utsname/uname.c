@@ -27,6 +27,8 @@ int uname(struct utsname *uname) {
     .machine = "riscv64\0",
 #elif defined(__x86_64__)
     .machine = "x86_64\0",
+#elif defined(__wasm__)
+    .machine = "wasm32\0",
 #else
 #error "Unknown architecture"
 #endif
