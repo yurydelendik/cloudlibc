@@ -12,6 +12,7 @@ install: default
 
 contrib/libc.imports:
 	grep "syscall " contrib/cloudabi/cloudabi.txt | awk '{print "cloudabi_sys_" $$2}' > contrib/libc.imports
+	echo "__thread_control_block" >> contrib/libc.imports
 
 clean:
 	rm -rf _sysroot _obj

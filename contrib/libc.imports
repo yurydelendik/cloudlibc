@@ -47,3 +47,4 @@ cloudabi_sys_sock_shutdown
 cloudabi_sys_thread_create
 cloudabi_sys_thread_exit
 cloudabi_sys_thread_yield
+__thread_control_block
