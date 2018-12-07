@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: BSD-2-Clause
 
+#if !defined(CRT1) || defined(CRT1_FILE)
+
 #include <common/crt.h>
 #include <common/pthread.h>
 #include <common/refcount.h>
@@ -42,8 +44,10 @@ static struct {
   }
 CLOUDABI_SYSCALL_NAMES(wrapper)
 
+#ifndef __wasm__
 // DSO handle. Not used, as we only support static linkage.
 void *__dso_handle = NULL;
+#endif
 
 // Stack protection: stack smashing and LLVM SafeStack.
 unsigned long __stack_chk_guard = 0xdeadc0de;
@@ -429,10 +433,12 @@ noreturn void _start(const cloudabi_auxv_t *auxv) {
   __pthread_self_object = &self_object;
   __pthread_thread_id = at_tid;
 
+#ifndef CRT1
   // Invoke global constructors.
   void (**ctor)(void) = __ctors_stop;
   while (ctor > __ctors_start)
     (*--ctor)();
+#endif
 
   // Invoke program_main(). If program_main() is not part of the
   // application, the C library provides a copy that calls main().
@@ -440,3 +446,5 @@ noreturn void _start(const cloudabi_auxv_t *auxv) {
   argdata_init_buffer(&ad, at_argdata, at_argdatalen, fd_passthrough, NULL);
   program_main(&ad);
 }
+
+#endif //CRT1_FILE

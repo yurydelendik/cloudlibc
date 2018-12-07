@@ -20,10 +20,12 @@ noreturn void exit(int ret) {
        entry != NULL; entry = entry->previous)
     entry->func(entry->arg);
 
+#ifndef CRT1
   // Invoke global destructors.
   void (**dtor)(void) = __dtors_start;
   while (dtor < __dtors_stop)
     (*dtor++)();
+#endif
 
   // Invoke atexit() functions.
   for (struct atexit *entry =

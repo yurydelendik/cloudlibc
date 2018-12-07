@@ -21,7 +21,7 @@ echo "=> Installing libraries"
 mkdir -p "${DESTDIR}${PREFIX}/lib"
 install -m 444 _obj/libargdata.a _obj/libc.a _obj/libm.a _obj/libpthread.a \
     _obj/librt.a _obj/libuv.a _obj/libxnet.a \
-    _obj/crt0.o _obj/crtbegin.o _obj/crtend.o \
+    _obj/crt0.o _obj/crt1.o _obj/crtbegin.o _obj/crtend.o \
     "${DESTDIR}${PREFIX}/lib/"
 
 if [ "$1" != "notests" ]; then

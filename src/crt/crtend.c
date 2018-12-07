@@ -4,6 +4,8 @@
 
 #include <common/crt.h>
 
+#ifndef CRT1
 // End of section markers.
 void (*__ctors_stop[0])(void) __section(".ctors");
 void (*__dtors_stop[0])(void) __section(".dtors");
+#endif
