@@ -17,4 +17,8 @@ contrib/libc.imports:
 clean:
 	rm -rf _sysroot _obj
 
+examples/t.wasm: examples/t.c
+	$(WC)/dist/bin/clang --target=wasm32-unknown-unknown-wasm --sysroot=_sysroot \
+	examples/t.c -o examples/t.wasm -g -O2
+
 .PHONY: default install clean

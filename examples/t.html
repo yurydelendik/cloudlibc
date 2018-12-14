@@ -1,0 +1,152 @@
+<script>
+(async () => {
+    const nop = () => { debugger; };
+    const cloudabi_sys_proc_exit = function (exitcode) {
+        exitCode = exitcode;
+    };
+    const cloudabi_sys_fd_seekW = function (fd, offsetPtr, whence, newoffsetPtr) {
+        const dv = new DataView(memory.buffer, 0, memory.buffer.byteLength);
+        switch (whence) {
+            case 1: // #define CLOUDABI_WHENCE_CUR 1
+            case 3: // CLOUDABI_WHENCE_SET 3
+                dv.setUint32(newoffsetPtr, dv.getUint32(offsetPtr, true), true);
+                dv.setUint32(newoffsetPtr + 4, dv.getUint32(offsetPtr + 4, true), true);
+                break;
+            case 2:// #define CLOUDABI_WHENCE_END 2
+                if (dv.getUint32(offsetPtr, true) != 0 || dv.getUint32(offsetPtr + 4, true) != 0) {
+                    return 70; // CLOUDABI_ESPIPE
+                }
+                dv.setUint32(newoffsetPtr,0, true);
+                dv.setUint32(newoffsetPtr + 4,0, true);
+                break;
+            default: return 70; // CLOUDABI_ESPIPE
+        }
+        return 0;
+    };
+    const cloudabi_sys_fd_pwriteW = function (fd, iovs, iovs_len, offsetPtr, nwrittenPtr) {
+        const dv = new DataView(memory.buffer, 0, memory.buffer.byteLength);
+        let nwritten = 0;
+        let decoder = new TextDecoder('utf-8');
+        for (let p = iovs, i = 0; i < iovs_len; i++, p += 8) {
+            const buf = dv.getUint32(p, true);
+            const buf_len = dv.getUint32(p + 4, true);
+            console.log('pwrite', decoder.decode(new Uint8Array(memory.buffer, buf, buf_len)));
+            nwritten += buf_len;
+        }
+        dv.setUint32(nwrittenPtr, nwritten, true);
+        return 0;
+    };
+    const cloudabi_sys_fd_close = function (fd) {
+        return 0;
+    }
+    let exitCode = null;
+    const memMap = [];
+    const cloudabi_sys_mem_mapW = function (addr, len, prot, flags, fd,
+                                            offPtr, memPtr) {
+        if (fd != -1) {
+            return 2; // EACCES
+        }
+        if (addr & 0xFFF || len & 0x0FFF) {
+            return 28; // CLOUDABI_EINVAL
+        }
+        if (addr) {
+            // TODO check if mmaped
+            const dv = new DataView(memory.buffer, memPtr, 4);
+            dv.setUint32(0, addr, true);
+            return 0;
+        }
+        let p;
+        let delta = len >>> 12;
+        if (memMap.length == 0) {
+            const wdelta = (delta + 15) >>> 4;
+            // Simple case
+            const wp = memory.grow(wdelta);
+            if (wp >> 0 == -1) {
+                return 48; // CLOUDABI_ENOMEM
+            }
+            p = wp * 16;
+            memMap.push(p + delta, p + wdelta * 16);
+        } else {
+            let found = false;
+            for (let i = 0; i < memMap.length; i += 2) {
+                if (memMap[i] + delta <= memMap[i + 1]) {
+                    p = memMap[i];
+                    if (memMap[i] + delta < memMap[i + 1] || i + 2 >= memMap.length) {
+                        memMap[i] += delta;
+                    } else {
+                        memMap.splice(i, 2);
+                    }
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                const te = memMap.pop();
+                const ts = memMap.pop();
+                const need = delta - (te - ts);
+                const wneed = (need + 15) >>> 4;
+                const wp = memory.grow(wneed);
+                if (wp >> 0 == -1) {
+                    return 48; // CLOUDABI_ENOMEM
+                }
+                // assert  (wp * 16 == te)
+                memMap.push(te + need, te + wneed * 16);
+                p = ts;
+            }
+        }
+        console.log('mmap', p, delta, memMap);
+        const dv = new DataView(memory.buffer, memPtr, 4);
+        dv.setUint32(0, p * 4096, true);
+        return 0;
+    };
+    const cloudabi_sys_mem_unmap = function (addr, len) {
+        if ((addr & 0x0FFF) || (len & 0x0FFF)) {
+            return 28; // CLOUDABI_EINVAL
+        }
+        const s = addr >>> 12, e = (addr + len) >>> 12;
+        for (let i = 0; i < memMap.length; i += 2) {
+            if (s < memMap[i]) {
+                // assert e <= memMap[i]
+                if (e == memMap[i]) {
+                    memMap[i] = s;
+                } else {
+                    memMap.splice(i, 0, s, e);
+                }
+                if (i > 0 && memMap[i - 1] == s) {
+                    memMap.splice(i - 1, 2);
+                }
+                break;
+            }
+        }
+        console.log('munmap', s, e, memMap);
+        return 0;
+    };
+    const imports = {
+        "env": {
+            "cloudabi_sys_poll": nop,
+            "cloudabi_sys_lock_unlock": nop,
+            "cloudabi_sys_proc_raise": nop,
+            "cloudabi_sys_proc_exit": cloudabi_sys_proc_exit,
+            "cloudabi_sys_mem_mapW": cloudabi_sys_mem_mapW,
+            "cloudabi_sys_mem_unmap": cloudabi_sys_mem_unmap,
+            "cloudabi_sys_file_stat_fget": nop,
+            "cloudabi_sys_clock_time_get": nop,
+            "cloudabi_sys_fd_close": cloudabi_sys_fd_close,
+            "cloudabi_sys_fd_seekW": cloudabi_sys_fd_seekW,
+            "cloudabi_sys_fd_preadW": nop,
+            "cloudabi_sys_fd_stat_get": nop,
+            "cloudabi_sys_fd_pwriteW": cloudabi_sys_fd_pwriteW,
+            "cloudabi_sys_fd_read": nop,
+            "cloudabi_sys_fd_write": nop,
+        },
+    };
+    const { instance } = await WebAssembly.instantiateStreaming(fetch("t.wasm"), imports);
+    const memory = instance.exports.memory;
+    try {
+        instance.exports._start();
+    } catch (e) {
+        if (exitCode == null) throw e;
+        console.log('exited', exitCode);
+    }
+})();
+</script>
