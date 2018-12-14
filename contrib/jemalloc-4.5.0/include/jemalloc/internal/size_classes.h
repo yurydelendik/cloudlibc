@@ -1395,6 +1395,298 @@
 #define	HUGE_MAXCLASS		((((size_t)1) << 62) + (((size_t)3) << 60))
 #endif
 
+#if (LG_SIZEOF_PTR == 2 && LG_TINY_MIN == 3 && LG_QUANTUM == 4 && LG_PAGE == 16)
+#define	SIZE_CLASSES \
+  /* index, lg_grp, lg_delta, ndelta, psz, bin, lg_delta_lookup */ \
+    SC(  0,      3,        3,      0,  no, yes,  3) \
+                                                         \
+    SC(  1,      3,        3,      1,  no, yes,  3) \
+    SC(  2,      4,        4,      1,  no, yes,  4) \
+    SC(  3,      4,        4,      2,  no, yes,  4) \
+    SC(  4,      4,        4,      3,  no, yes,  4) \
+                                                         \
+    SC(  5,      6,        4,      1,  no, yes,  4) \
+    SC(  6,      6,        4,      2,  no, yes,  4) \
+    SC(  7,      6,        4,      3,  no, yes,  4) \
+    SC(  8,      6,        4,      4,  no, yes,  4) \
+                                                         \
+    SC(  9,      7,        5,      1,  no, yes,  5) \
+    SC( 10,      7,        5,      2,  no, yes,  5) \
+    SC( 11,      7,        5,      3,  no, yes,  5) \
+    SC( 12,      7,        5,      4,  no, yes,  5) \
+                                                         \
+    SC( 13,      8,        6,      1,  no, yes,  6) \
+    SC( 14,      8,        6,      2,  no, yes,  6) \
+    SC( 15,      8,        6,      3,  no, yes,  6) \
+    SC( 16,      8,        6,      4,  no, yes,  6) \
+                                                         \
+    SC( 17,      9,        7,      1,  no, yes,  7) \
+    SC( 18,      9,        7,      2,  no, yes,  7) \
+    SC( 19,      9,        7,      3,  no, yes,  7) \
+    SC( 20,      9,        7,      4,  no, yes,  7) \
+                                                         \
+    SC( 21,     10,        8,      1,  no, yes,  8) \
+    SC( 22,     10,        8,      2,  no, yes,  8) \
+    SC( 23,     10,        8,      3,  no, yes,  8) \
+    SC( 24,     10,        8,      4,  no, yes,  8) \
+                                                         \
+    SC( 25,     11,        9,      1,  no, yes,  9) \
+    SC( 26,     11,        9,      2,  no, yes,  9) \
+    SC( 27,     11,        9,      3,  no, yes,  9) \
+    SC( 28,     11,        9,      4,  no, yes,  9) \
+                                                         \
+    SC( 29,     12,       10,      1,  no, yes, no) \
+    SC( 30,     12,       10,      2,  no, yes, no) \
+    SC( 31,     12,       10,      3,  no, yes, no) \
+    SC( 32,     12,       10,      4,  no, yes, no) \
+                                                         \
+    SC( 33,     13,       11,      1,  no, yes, no) \
+    SC( 34,     13,       11,      2,  no, yes, no) \
+    SC( 35,     13,       11,      3,  no, yes, no) \
+    SC( 36,     13,       11,      4,  no, yes, no) \
+                                                         \
+    SC( 37,     14,       12,      1,  no, yes, no) \
+    SC( 38,     14,       12,      2,  no, yes, no) \
+    SC( 39,     14,       12,      3,  no, yes, no) \
+    SC( 40,     14,       12,      4,  no, yes, no) \
+                                                         \
+    SC( 41,     15,       13,      1,  no, yes, no) \
+    SC( 42,     15,       13,      2,  no, yes, no) \
+    SC( 43,     15,       13,      3,  no, yes, no) \
+    SC( 44,     15,       13,      4, yes, yes, no) \
+                                                         \
+    SC( 45,     16,       14,      1,  no, yes, no) \
+    SC( 46,     16,       14,      2,  no, yes, no) \
+    SC( 47,     16,       14,      3,  no, yes, no) \
+    SC( 48,     16,       14,      4, yes, yes, no) \
+                                                         \
+    SC( 49,     17,       15,      1,  no, yes, no) \
+    SC( 50,     17,       15,      2, yes, yes, no) \
+    SC( 51,     17,       15,      3,  no, yes, no) \
+    SC( 52,     17,       15,      4, yes,  no, no) \
+                                                         \
+    SC( 53,     18,       16,      1, yes,  no, no) \
+    SC( 54,     18,       16,      2, yes,  no, no) \
+    SC( 55,     18,       16,      3, yes,  no, no) \
+    SC( 56,     18,       16,      4, yes,  no, no) \
+                                                         \
+    SC( 57,     19,       17,      1, yes,  no, no) \
+    SC( 58,     19,       17,      2, yes,  no, no) \
+    SC( 59,     19,       17,      3, yes,  no, no) \
+    SC( 60,     19,       17,      4, yes,  no, no) \
+                                                         \
+    SC( 61,     20,       18,      1, yes,  no, no) \
+    SC( 62,     20,       18,      2, yes,  no, no) \
+    SC( 63,     20,       18,      3, yes,  no, no) \
+    SC( 64,     20,       18,      4, yes,  no, no) \
+                                                         \
+    SC( 65,     21,       19,      1, yes,  no, no) \
+    SC( 66,     21,       19,      2, yes,  no, no) \
+    SC( 67,     21,       19,      3, yes,  no, no) \
+    SC( 68,     21,       19,      4, yes,  no, no) \
+                                                         \
+    SC( 69,     22,       20,      1, yes,  no, no) \
+    SC( 70,     22,       20,      2, yes,  no, no) \
+    SC( 71,     22,       20,      3, yes,  no, no) \
+    SC( 72,     22,       20,      4, yes,  no, no) \
+                                                         \
+    SC( 73,     23,       21,      1, yes,  no, no) \
+    SC( 74,     23,       21,      2, yes,  no, no) \
+    SC( 75,     23,       21,      3, yes,  no, no) \
+    SC( 76,     23,       21,      4, yes,  no, no) \
+                                                         \
+    SC( 77,     24,       22,      1, yes,  no, no) \
+    SC( 78,     24,       22,      2, yes,  no, no) \
+    SC( 79,     24,       22,      3, yes,  no, no) \
+    SC( 80,     24,       22,      4, yes,  no, no) \
+                                                         \
+    SC( 81,     25,       23,      1, yes,  no, no) \
+    SC( 82,     25,       23,      2, yes,  no, no) \
+    SC( 83,     25,       23,      3, yes,  no, no) \
+    SC( 84,     25,       23,      4, yes,  no, no) \
+                                                         \
+    SC( 85,     26,       24,      1, yes,  no, no) \
+    SC( 86,     26,       24,      2, yes,  no, no) \
+    SC( 87,     26,       24,      3, yes,  no, no) \
+    SC( 88,     26,       24,      4, yes,  no, no) \
+                                                         \
+    SC( 89,     27,       25,      1, yes,  no, no) \
+    SC( 90,     27,       25,      2, yes,  no, no) \
+    SC( 91,     27,       25,      3, yes,  no, no) \
+    SC( 92,     27,       25,      4, yes,  no, no) \
+                                                         \
+    SC( 93,     28,       26,      1, yes,  no, no) \
+    SC( 94,     28,       26,      2, yes,  no, no) \
+    SC( 95,     28,       26,      3, yes,  no, no) \
+    SC( 96,     28,       26,      4, yes,  no, no) \
+                                                         \
+    SC( 97,     29,       27,      1, yes,  no, no) \
+    SC( 98,     29,       27,      2, yes,  no, no) \
+    SC( 99,     29,       27,      3, yes,  no, no) \
+    SC(100,     29,       27,      4, yes,  no, no) \
+                                                         \
+    SC(101,     30,       28,      1, yes,  no, no) \
+    SC(102,     30,       28,      2, yes,  no, no) \
+    SC(103,     30,       28,      3, yes,  no, no) \
+
+#define	SIZE_CLASSES_DEFINED
+#define	NTBINS			1
+#define	NLBINS			29
+#define	NBINS			52
+#define	NSIZES			104
+#define	NPSIZES			55
+#define	LG_TINY_MAXCLASS	3
+#define	LOOKUP_MAXCLASS		((((size_t)1) << 11) + (((size_t)4) << 9))
+#define	SMALL_MAXCLASS		((((size_t)1) << 17) + (((size_t)3) << 15))
+#define	LG_LARGE_MINCLASS	18
+#define	HUGE_MAXCLASS		((((size_t)1) << 30) + (((size_t)3) << 28))
+#endif
+
+#if (LG_SIZEOF_PTR == 2 && LG_TINY_MIN == 4 && LG_QUANTUM == 4 && LG_PAGE == 16)
+#define	SIZE_CLASSES \
+  /* index, lg_grp, lg_delta, ndelta, psz, bin, lg_delta_lookup */ \
+    SC(  0,      4,        4,      0,  no, yes,  4) \
+    SC(  1,      4,        4,      1,  no, yes,  4) \
+    SC(  2,      4,        4,      2,  no, yes,  4) \
+    SC(  3,      4,        4,      3,  no, yes,  4) \
+                                                         \
+    SC(  4,      6,        4,      1,  no, yes,  4) \
+    SC(  5,      6,        4,      2,  no, yes,  4) \
+    SC(  6,      6,        4,      3,  no, yes,  4) \
+    SC(  7,      6,        4,      4,  no, yes,  4) \
+                                                         \
+    SC(  8,      7,        5,      1,  no, yes,  5) \
+    SC(  9,      7,        5,      2,  no, yes,  5) \
+    SC( 10,      7,        5,      3,  no, yes,  5) \
+    SC( 11,      7,        5,      4,  no, yes,  5) \
+                                                         \
+    SC( 12,      8,        6,      1,  no, yes,  6) \
+    SC( 13,      8,        6,      2,  no, yes,  6) \
+    SC( 14,      8,        6,      3,  no, yes,  6) \
+    SC( 15,      8,        6,      4,  no, yes,  6) \
+                                                         \
+    SC( 16,      9,        7,      1,  no, yes,  7) \
+    SC( 17,      9,        7,      2,  no, yes,  7) \
+    SC( 18,      9,        7,      3,  no, yes,  7) \
+    SC( 19,      9,        7,      4,  no, yes,  7) \
+                                                         \
+    SC( 20,     10,        8,      1,  no, yes,  8) \
+    SC( 21,     10,        8,      2,  no, yes,  8) \
+    SC( 22,     10,        8,      3,  no, yes,  8) \
+    SC( 23,     10,        8,      4,  no, yes,  8) \
+                                                         \
+    SC( 24,     11,        9,      1,  no, yes,  9) \
+    SC( 25,     11,        9,      2,  no, yes,  9) \
+    SC( 26,     11,        9,      3,  no, yes,  9) \
+    SC( 27,     11,        9,      4,  no, yes,  9) \
+                                                         \
+    SC( 28,     12,       10,      1,  no, yes, no) \
+    SC( 29,     12,       10,      2,  no, yes, no) \
+    SC( 30,     12,       10,      3,  no, yes, no) \
+    SC( 31,     12,       10,      4,  no, yes, no) \
+                                                         \
+    SC( 32,     13,       11,      1,  no, yes, no) \
+    SC( 33,     13,       11,      2,  no, yes, no) \
+    SC( 34,     13,       11,      3,  no, yes, no) \
+    SC( 35,     13,       11,      4,  no, yes, no) \
+                                                         \
+    SC( 36,     14,       12,      1,  no, yes, no) \
+    SC( 37,     14,       12,      2,  no, yes, no) \
+    SC( 38,     14,       12,      3,  no, yes, no) \
+    SC( 39,     14,       12,      4,  no, yes, no) \
+                                                         \
+    SC( 40,     15,       13,      1,  no, yes, no) \
+    SC( 41,     15,       13,      2,  no, yes, no) \
+    SC( 42,     15,       13,      3,  no, yes, no) \
+    SC( 43,     15,       13,      4, yes, yes, no) \
+                                                         \
+    SC( 44,     16,       14,      1,  no, yes, no) \
+    SC( 45,     16,       14,      2,  no, yes, no) \
+    SC( 46,     16,       14,      3,  no, yes, no) \
+    SC( 47,     16,       14,      4, yes, yes, no) \
+                                                         \
+    SC( 48,     17,       15,      1,  no, yes, no) \
+    SC( 49,     17,       15,      2, yes, yes, no) \
+    SC( 50,     17,       15,      3,  no, yes, no) \
+    SC( 51,     17,       15,      4, yes,  no, no) \
+                                                         \
+    SC( 52,     18,       16,      1, yes,  no, no) \
+    SC( 53,     18,       16,      2, yes,  no, no) \
+    SC( 54,     18,       16,      3, yes,  no, no) \
+    SC( 55,     18,       16,      4, yes,  no, no) \
+                                                         \
+    SC( 56,     19,       17,      1, yes,  no, no) \
+    SC( 57,     19,       17,      2, yes,  no, no) \
+    SC( 58,     19,       17,      3, yes,  no, no) \
+    SC( 59,     19,       17,      4, yes,  no, no) \
+                                                         \
+    SC( 60,     20,       18,      1, yes,  no, no) \
+    SC( 61,     20,       18,      2, yes,  no, no) \
+    SC( 62,     20,       18,      3, yes,  no, no) \
+    SC( 63,     20,       18,      4, yes,  no, no) \
+                                                         \
+    SC( 64,     21,       19,      1, yes,  no, no) \
+    SC( 65,     21,       19,      2, yes,  no, no) \
+    SC( 66,     21,       19,      3, yes,  no, no) \
+    SC( 67,     21,       19,      4, yes,  no, no) \
+                                                         \
+    SC( 68,     22,       20,      1, yes,  no, no) \
+    SC( 69,     22,       20,      2, yes,  no, no) \
+    SC( 70,     22,       20,      3, yes,  no, no) \
+    SC( 71,     22,       20,      4, yes,  no, no) \
+                                                         \
+    SC( 72,     23,       21,      1, yes,  no, no) \
+    SC( 73,     23,       21,      2, yes,  no, no) \
+    SC( 74,     23,       21,      3, yes,  no, no) \
+    SC( 75,     23,       21,      4, yes,  no, no) \
+                                                         \
+    SC( 76,     24,       22,      1, yes,  no, no) \
+    SC( 77,     24,       22,      2, yes,  no, no) \
+    SC( 78,     24,       22,      3, yes,  no, no) \
+    SC( 79,     24,       22,      4, yes,  no, no) \
+                                                         \
+    SC( 80,     25,       23,      1, yes,  no, no) \
+    SC( 81,     25,       23,      2, yes,  no, no) \
+    SC( 82,     25,       23,      3, yes,  no, no) \
+    SC( 83,     25,       23,      4, yes,  no, no) \
+                                                         \
+    SC( 84,     26,       24,      1, yes,  no, no) \
+    SC( 85,     26,       24,      2, yes,  no, no) \
+    SC( 86,     26,       24,      3, yes,  no, no) \
+    SC( 87,     26,       24,      4, yes,  no, no) \
+                                                         \
+    SC( 88,     27,       25,      1, yes,  no, no) \
+    SC( 89,     27,       25,      2, yes,  no, no) \
+    SC( 90,     27,       25,      3, yes,  no, no) \
+    SC( 91,     27,       25,      4, yes,  no, no) \
+                                                         \
+    SC( 92,     28,       26,      1, yes,  no, no) \
+    SC( 93,     28,       26,      2, yes,  no, no) \
+    SC( 94,     28,       26,      3, yes,  no, no) \
+    SC( 95,     28,       26,      4, yes,  no, no) \
+                                                         \
+    SC( 96,     29,       27,      1, yes,  no, no) \
+    SC( 97,     29,       27,      2, yes,  no, no) \
+    SC( 98,     29,       27,      3, yes,  no, no) \
+    SC( 99,     29,       27,      4, yes,  no, no) \
+                                                         \
+    SC(100,     30,       28,      1, yes,  no, no) \
+    SC(101,     30,       28,      2, yes,  no, no) \
+    SC(102,     30,       28,      3, yes,  no, no) \
+
+#define	SIZE_CLASSES_DEFINED
+#define	NTBINS			0
+#define	NLBINS			28
+#define	NBINS			51
+#define	NSIZES			103
+#define	NPSIZES			55
+#define	LG_TINY_MAXCLASS	"NA"
+#define	LOOKUP_MAXCLASS		((((size_t)1) << 11) + (((size_t)4) << 9))
+#define	SMALL_MAXCLASS		((((size_t)1) << 17) + (((size_t)3) << 15))
+#define	LG_LARGE_MINCLASS	18
+#define	HUGE_MAXCLASS		((((size_t)1) << 30) + (((size_t)3) << 28))
+#endif
+
 #ifndef SIZE_CLASSES_DEFINED
 #  error "No size class definitions match configuration"
 #endif

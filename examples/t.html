@@ -46,7 +46,7 @@
         if (fd != -1) {
             return 2; // EACCES
         }
-        if (addr & 0xFFF || len & 0x0FFF) {
+        if (addr & 0xFFFF || len & 0xFFFF) {
             return 28; // CLOUDABI_EINVAL
         }
         if (addr) {
@@ -56,16 +56,14 @@
             return 0;
         }
         let p;
-        let delta = len >>> 12;
+        let delta = len >>> 16;
         if (memMap.length == 0) {
-            const wdelta = (delta + 15) >>> 4;
             // Simple case
-            const wp = memory.grow(wdelta);
-            if (wp >> 0 == -1) {
+            p = memory.grow(delta);
+            if (p >> 0 == -1) {
                 return 48; // CLOUDABI_ENOMEM
             }
-            p = wp * 16;
-            memMap.push(p + delta, p + wdelta * 16);
+            memMap.push(p + delta, p + delta);
         } else {
             let found = false;
             for (let i = 0; i < memMap.length; i += 2) {
@@ -84,26 +82,25 @@
                 const te = memMap.pop();
                 const ts = memMap.pop();
                 const need = delta - (te - ts);
-                const wneed = (need + 15) >>> 4;
-                const wp = memory.grow(wneed);
-                if (wp >> 0 == -1) {
+                const deltap = memory.grow(need);
+                if (deltap >> 0 == -1) {
                     return 48; // CLOUDABI_ENOMEM
                 }
-                // assert  (wp * 16 == te)
-                memMap.push(te + need, te + wneed * 16);
+                // assert  (deltap == te)
+                memMap.push(te + need, te + need);
                 p = ts;
             }
         }
         console.log('mmap', p, delta, memMap);
         const dv = new DataView(memory.buffer, memPtr, 4);
-        dv.setUint32(0, p * 4096, true);
+        dv.setUint32(0, p * 65536, true);
         return 0;
     };
     const cloudabi_sys_mem_unmap = function (addr, len) {
-        if ((addr & 0x0FFF) || (len & 0x0FFF)) {
+        if ((addr & 0xFFFF) || (len & 0xFFFF)) {
             return 28; // CLOUDABI_EINVAL
         }
-        const s = addr >>> 12, e = (addr + len) >>> 12;
+        const s = addr >>> 16, e = (addr + len) >>> 16;
         for (let i = 0; i < memMap.length; i += 2) {
             if (s < memMap[i]) {
                 // assert e <= memMap[i]
