@@ -1,8 +1,8 @@
-WC = $(HOME)/Work/wasmception
+LLVM_BIN = $(HOME)/Work/llvmwasm/llvm-build
 CABI = ./contrib/cloudabi
 
 default:
-	CC=$(WC)/dist/bin/clang AR=$(WC)/dist/bin/llvm-ar \
+	CC=$(LLVM_BIN)/bin/clang AR=$(LLVM_BIN)/bin/llvm-ar \
 	CFLAGS="--target=wasm32-unknown-unknown-wasm -D__wasm__ -D__CloudABI__ -DCRT1 -DNOVDSO -I$(CABI)/headers -g -O2" \
 	./build notests
 
@@ -18,7 +18,7 @@ clean:
 	rm -rf _sysroot _obj
 
 examples/t.wasm: examples/t.c
-	$(WC)/dist/bin/clang --target=wasm32-unknown-unknown-wasm --sysroot=_sysroot \
+	$(LLVM_BIN)/bin/clang --target=wasm32-unknown-unknown-wasm --sysroot=_sysroot \
 	examples/t.c -o examples/t.wasm -g -O2
 
 .PHONY: default install clean
