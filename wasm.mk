@@ -18,7 +18,7 @@ clean:
 	rm -rf _sysroot _obj
 
 examples/t.wasm: examples/t.c
-	$(LLVM_BIN)/bin/clang --target=wasm32-unknown-unknown-wasm --sysroot=_sysroot \
+	$(HOME)/Work/wasmception/dist/bin/clang --target=wasm32-unknown-unknown-wasm --sysroot=_sysroot \
 	examples/t.c -o examples/t.wasm -g -O2
 
 .PHONY: default install clean
